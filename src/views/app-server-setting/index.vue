@@ -1,5 +1,11 @@
 <template>
     <div class="app-container">
+
+        <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit"
+            @click="handleCreate">
+            添加
+        </el-button>
+
         <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%">
             <!-- <el-table-column align="center" label="ID" width="80">
                 <template slot-scope="{row}">
@@ -179,7 +185,39 @@ export default {
                 message: 'The title has been edited',
                 type: 'success'
             })
-        }
+        },
+        handleCreate(row) {
+            row.resetTemp()
+            row.dialogStatus = 'create'
+            row.dialogFormVisible = true
+            row.$nextTick(() => {
+                row.$refs['dataForm'].clearValidate()
+            })
+        },
+        createData() {
+            this.$refs['dataForm'].validate(valid => {
+                if (valid) {
+                    this.dialogFormVisible = false
+                    this.$message({
+                        message: '添加成功',
+                        type: 'success'
+                    })
+                } else {
+                    return false
+                }
+            })
+        },
+        
+        handleUpdate(row) {
+            this.temp = Object.assign({}, row) // copy obj
+            this.temp.timestamp = new Date(this.temp.timestamp)
+            this.dialogStatus = 'update'
+            this.dialogFormVisible = true
+            this.$nextTick(() => {
+                this.$refs['dataForm'].clearValidate()
+            })
+        },
+        
     }
 }
 </script>
